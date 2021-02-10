@@ -33,26 +33,33 @@ namespace PelotonDadsChallenge.Services
 
                 var challengeResults = new List<PelotonDadChallengeResult>();
 
-                foreach(var workout in pelotonWorkouts)
+                foreach (var workout in pelotonWorkouts)
                 {
                     try
                     {
                         var uri = $"{_pelotonOptions.BaseUri}/api/workout/{workout.Id}/performance_graph?every_n=100";
                         var result = await session.Request(uri).GetJsonAsync<PelotonWorkoutResponse>();
 
-                        var outputSummary = result.Summaries.Where(x => x.Slug == "total_output").FirstOrDefault();
-
-                        if(outputSummary != null)
+                        var challengeResult = new PelotonDadChallengeResult()
                         {
-                            var challengeResult = new PelotonDadChallengeResult()
-                            {
-                                Output = outputSummary.Value,
-                                UserId = workout.UserId,
-                                Username = workout.UserName
-                            };
+                            Output = GetSafeWorkoutSummary(result.Summaries, "total_output").Value,
+                            Distance = GetSafeWorkoutSummary(result.Summaries, "distance").Value,
+                            Calories = GetSafeWorkoutSummary(result.Summaries, "calories").Value,
+                            MaxOutput = GetSafeWorkoutMetric(result.Metrics, "output").MaxValue,
+                            AverageOutput = GetSafeWorkoutMetric(result.Metrics, "output").AverageValue,
+                            MaxCadence = GetSafeWorkoutMetric(result.Metrics, "cadence").MaxValue,
+                            AverageCadence = GetSafeWorkoutMetric(result.Metrics, "cadence").AverageValue,
+                            MaxResistance = GetSafeWorkoutMetric(result.Metrics, "resistance").MaxValue,
+                            AverageResistance = GetSafeWorkoutMetric(result.Metrics, "resistance").AverageValue,
+                            MaxSpeed = GetSafeWorkoutMetric(result.Metrics, "speed").MaxValue,
+                            AverageSpeed = GetSafeWorkoutMetric(result.Metrics, "speed").AverageValue,
+                            MaxHeartRate = GetSafeWorkoutMetric(result.Metrics, "heart_rate").MaxValue,
+                            AverageHeartRate = GetSafeWorkoutMetric(result.Metrics, "heart_rate").AverageValue,
+                            UserId = workout.UserId,
+                            Username = workout.UserName
+                        };
 
-                            challengeResults.Add(challengeResult);
-                        }
+                        challengeResults.Add(challengeResult);
                     }
                     catch (Exception ex)
                     {
@@ -61,6 +68,26 @@ namespace PelotonDadsChallenge.Services
                 }
 
                 return challengeResults;
+            }
+
+            PelotonWorkoutResponseSummary GetSafeWorkoutSummary(IEnumerable<PelotonWorkoutResponseSummary> summaries, string slug)
+            {
+                var summary = summaries.Where(x => x.Slug == slug).FirstOrDefault();
+
+                if (summary == null)
+                    return new PelotonWorkoutResponseSummary();
+
+                return summary;
+            }
+
+            PelotonWorkoutResponseMetric GetSafeWorkoutMetric(IEnumerable<PelotonWorkoutResponseMetric> metrics, string slug)
+            {
+                var metric = metrics.Where(x => x.Slug == slug).FirstOrDefault();
+
+                if (metric == null)
+                    return new PelotonWorkoutResponseMetric();
+
+                return metric;
             }
         }
     }
