@@ -22,10 +22,12 @@ namespace PelotonDadsChallenge.Services
         public async Task EmailChallengeResults(IEnumerable<PelotonDadChallengeResult> results)
         {
             var engine = new FileHelperEngine<PelotonDadChallengeResult>();
+            var header = engine.GetFileHeader();
 
             var stream = new MemoryStream();
             var writer = new StreamWriter(stream);
             writer.AutoFlush = true;
+            writer.WriteLine(header);
             engine.WriteStream(writer, results);
             stream.Position = 0;
 
