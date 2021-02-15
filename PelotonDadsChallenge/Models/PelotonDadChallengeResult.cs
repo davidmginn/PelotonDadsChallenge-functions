@@ -20,5 +20,6 @@ namespace PelotonDadsChallenge.Models
         public decimal AverageSpeed { get; set; }
         public decimal MaxHeartRate { get; set; }
         public decimal AverageHeartRate { get; set; }
+        public string Error { get; set; }
     }
 }

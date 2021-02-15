@@ -37,29 +37,41 @@ namespace PelotonDadsChallenge.Services
                 {
                     try
                     {
-                        var uri = $"{_pelotonOptions.BaseUri}/api/workout/{workout.Id}/performance_graph?every_n=100";
-                        var result = await session.Request(uri).GetJsonAsync<PelotonWorkoutResponse>();
-
-                        var challengeResult = new PelotonDadChallengeResult()
+                        if (!string.IsNullOrEmpty(workout.Id))
                         {
-                            Output = GetSafeWorkoutSummary(result.Summaries, "total_output").Value,
-                            Distance = GetSafeWorkoutSummary(result.Summaries, "distance").Value,
-                            Calories = GetSafeWorkoutSummary(result.Summaries, "calories").Value,
-                            MaxOutput = GetSafeWorkoutMetric(result.Metrics, "output").MaxValue,
-                            AverageOutput = GetSafeWorkoutMetric(result.Metrics, "output").AverageValue,
-                            MaxCadence = GetSafeWorkoutMetric(result.Metrics, "cadence").MaxValue,
-                            AverageCadence = GetSafeWorkoutMetric(result.Metrics, "cadence").AverageValue,
-                            MaxResistance = GetSafeWorkoutMetric(result.Metrics, "resistance").MaxValue,
-                            AverageResistance = GetSafeWorkoutMetric(result.Metrics, "resistance").AverageValue,
-                            MaxSpeed = GetSafeWorkoutMetric(result.Metrics, "speed").MaxValue,
-                            AverageSpeed = GetSafeWorkoutMetric(result.Metrics, "speed").AverageValue,
-                            MaxHeartRate = GetSafeWorkoutMetric(result.Metrics, "heart_rate").MaxValue,
-                            AverageHeartRate = GetSafeWorkoutMetric(result.Metrics, "heart_rate").AverageValue,
-                            UserId = workout.UserId,
-                            Username = workout.UserName
-                        };
+                            var uri = $"{_pelotonOptions.BaseUri}/api/workout/{workout.Id}/performance_graph?every_n=100";
+                            var result = await session.Request(uri).GetJsonAsync<PelotonWorkoutResponse>();
 
-                        challengeResults.Add(challengeResult);
+                            var challengeResult = new PelotonDadChallengeResult()
+                            {
+                                Output = GetSafeWorkoutSummary(result.Summaries, "total_output").Value,
+                                Distance = GetSafeWorkoutSummary(result.Summaries, "distance").Value,
+                                Calories = GetSafeWorkoutSummary(result.Summaries, "calories").Value,
+                                MaxOutput = GetSafeWorkoutMetric(result.Metrics, "output").MaxValue,
+                                AverageOutput = GetSafeWorkoutMetric(result.Metrics, "output").AverageValue,
+                                MaxCadence = GetSafeWorkoutMetric(result.Metrics, "cadence").MaxValue,
+                                AverageCadence = GetSafeWorkoutMetric(result.Metrics, "cadence").AverageValue,
+                                MaxResistance = GetSafeWorkoutMetric(result.Metrics, "resistance").MaxValue,
+                                AverageResistance = GetSafeWorkoutMetric(result.Metrics, "resistance").AverageValue,
+                                MaxSpeed = GetSafeWorkoutMetric(result.Metrics, "speed").MaxValue,
+                                AverageSpeed = GetSafeWorkoutMetric(result.Metrics, "speed").AverageValue,
+                                MaxHeartRate = GetSafeWorkoutMetric(result.Metrics, "heart_rate").MaxValue,
+                                AverageHeartRate = GetSafeWorkoutMetric(result.Metrics, "heart_rate").AverageValue,
+                                UserId = workout.UserId,
+                                Username = workout.UserName
+                            };
+
+                            challengeResults.Add(challengeResult);
+                        }
+                        else
+                        {
+                            challengeResults.Add(new PelotonDadChallengeResult()
+                            {
+                                UserId = workout.UserId,
+                                Username = workout.UserName,
+                                Error = workout.Error
+                            });
+                        }
                     }
                     catch (Exception ex)
                     {

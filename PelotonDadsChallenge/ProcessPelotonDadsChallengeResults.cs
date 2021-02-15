@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PelotonDadsChallenge.Configuration;
@@ -8,7 +9,7 @@ using PelotonDadsChallenge.Services;
 
 namespace PelotonDadsChallenge
 {
-    public class PelotonDadsChallenge
+    public class ProcessPelotonDadsChallengeResults
     {
         private IPelotonFollowersService _pelotonFollowersService;
         private IPelotonWorkoutsService _pelotonWorkoutsService;
@@ -16,7 +17,7 @@ namespace PelotonDadsChallenge
         private ISendGridService _sendGridService;
         private PelotonOptions _pelotonOptions;
 
-        public PelotonDadsChallenge(IPelotonFollowersService pelotonFollowersService,
+        public ProcessPelotonDadsChallengeResults(IPelotonFollowersService pelotonFollowersService,
             IPelotonWorkoutsService pelotonWorkoutsService,
             IPelotonWorkoutService pelotonWorkoutService,
             ISendGridService sendGridService,
@@ -29,11 +30,10 @@ namespace PelotonDadsChallenge
             _pelotonOptions = pelotonOptions.Value;
         }
 
-
-        [FunctionName("PelotonDadsChallenge")]
-        public async Task Run([TimerTrigger("0 */15 * * * *", RunOnStartup = true)] TimerInfo myTimer, ILogger log)
+        [FunctionName("ProcessPelotonDadsChallengeResults")]
+        public async Task Run([QueueTrigger("results")] string myQueueItem, ILogger log)
         {
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            log.LogInformation($"C# Queue trigger function executed at: {DateTime.Now}");
 
             var followers = await _pelotonFollowersService.GetPelotonFollowers();
 
@@ -43,7 +43,7 @@ namespace PelotonDadsChallenge
 
             await _sendGridService.EmailChallengeResults(challengeResults);
 
-            log.LogInformation($"C# Timer trigger function completed at: {DateTime.Now}");
+            log.LogInformation($"C# Queue trigger function completed at: {DateTime.Now}");
         }
     }
 }

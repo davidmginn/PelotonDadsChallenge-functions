@@ -47,10 +47,25 @@ namespace PelotonDadsChallenge.Services
                             workout.UserName = user.Username;
                             workouts.Add(workout);
                         }
+                        else
+                        {
+                            workouts.Add(new PelotonWorkout()
+                            {
+                                UserId = user.Id,
+                                UserName = user.Username,
+                            });
+                        }
                     }
                     catch(Exception ex)
                     {
                         _logger.LogError(ex, $"Error retrieving data for User Id: {user.Id}");
+
+                        workouts.Add(new PelotonWorkout()
+                        {
+                            UserId = user.Id,
+                            UserName = user.Username,
+                            Error = ex.Message
+                        });
                     }
                 }
 
