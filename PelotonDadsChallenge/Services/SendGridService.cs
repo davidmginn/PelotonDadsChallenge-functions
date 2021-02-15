@@ -7,6 +7,7 @@ using PelotonDadsChallenge.Configuration;
 using PelotonDadsChallenge.Models;
 using SendGrid;
 using SendGrid.Helpers.Mail;
+using System.Linq;
 
 namespace PelotonDadsChallenge.Services
 {
@@ -47,7 +48,11 @@ namespace PelotonDadsChallenge.Services
                 PlainTextContent = "Sample Challenge Report ",
                 HtmlContent = "<strong>Sample Challenge Report</strong>"
             };
-            msg.AddTo(new EmailAddress(_sendGridOptions.ToEmail, null));
+            var emails = new List<string>(_sendGridOptions.ToEmail.Split(','));
+            emails.ForEach(x =>
+            {
+                msg.AddTo(x);
+            });
             msg.AddAttachment("pelotonDadsChallengeResults.csv", content, "text/csv", "attachment", "banner");
 
             var response = await client.SendEmailAsync(msg);
