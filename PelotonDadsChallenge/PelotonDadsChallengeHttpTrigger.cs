@@ -13,7 +13,7 @@ namespace PelotonDadsChallenge
     public static class PelotonDadsChallengeHttpTrigger
     {
         [FunctionName("PelotonDadsChallengeHttpTrigger")]
-        public static async Task<IActionResult> Run(
+        public static IActionResult Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
             [Queue("results")]ICollector<string> collector,
             ILogger log)

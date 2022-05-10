@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using PelotonDadsChallenge.Configuration;
 using Flurl.Http;
 using PelotonDadsChallenge.Models;
+using System;
 
 namespace PelotonDadsChallenge.Services
 {
@@ -19,11 +20,14 @@ namespace PelotonDadsChallenge.Services
         {
             var uri = $"{_pelotonOptions.BaseUri}/auth/login";
 
-            var result = await session.Request(uri).PostJsonAsync(new
-            {
-                username_or_email = _pelotonOptions.Username,
-                password = _pelotonOptions.Password
-            }).ReceiveJson<PelotonAuthenticationResponse>();
+            var result = await session.Request(uri)
+                .WithHeader("User-Agent", "PostmanRuntime/7.26.10")
+                .WithHeader("Content-Type", "application/json")
+                .PostJsonAsync(new
+                {
+                    username_or_email = _pelotonOptions.Username,
+                    password = _pelotonOptions.Password
+                }).ReceiveJson<PelotonAuthenticationResponse>();
 
             return result;
         }

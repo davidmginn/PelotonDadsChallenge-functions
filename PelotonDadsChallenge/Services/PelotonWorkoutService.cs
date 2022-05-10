@@ -58,10 +58,25 @@ namespace PelotonDadsChallenge.Services
                                 MaxHeartRate = GetSafeWorkoutMetric(result.Metrics, "heart_rate").MaxValue,
                                 AverageHeartRate = GetSafeWorkoutMetric(result.Metrics, "heart_rate").AverageValue,
                                 UserId = workout.UserId,
-                                Username = workout.UserName
+                                Username = workout.UserName,
+                                StartTime = workout.StartTimeUtc.UtcDateTime.ToString("G"),
+                                EndTime = workout.EndTimeUtc.UtcDateTime.ToString("G"),
+                                Status = workout.Status
                             };
 
-                            challengeResults.Add(challengeResult);
+                            var existingResult = challengeResults.Where(x => x.UserId == challengeResult.UserId).FirstOrDefault();
+                            if(existingResult == null)
+                            {
+                                challengeResults.Add(challengeResult);
+                            }
+                            else
+                            {
+                                if(challengeResult.Output > existingResult.Output)
+                                {
+                                    challengeResults.Remove(existingResult);
+                                    challengeResults.Add(challengeResult);
+                                }
+                            }
                         }
                         else
                         {

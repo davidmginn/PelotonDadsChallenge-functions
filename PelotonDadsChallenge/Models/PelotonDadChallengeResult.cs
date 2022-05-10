@@ -1,4 +1,5 @@
-﻿using FileHelpers;
+﻿using System;
+using FileHelpers;
 
 namespace PelotonDadsChallenge.Models
 {
@@ -7,7 +8,11 @@ namespace PelotonDadsChallenge.Models
     {
         public string Username { get; set; }
         public string UserId { get; set; }
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
+        public string Status { get; set; }
         public decimal Output { get; set; }
+        public decimal PersonalRecord { get; set; }
         public decimal Distance { get; set; }
         public decimal Calories { get; set; }
         public decimal MaxOutput { get; set; }

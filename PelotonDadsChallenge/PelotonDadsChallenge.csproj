@@ -11,6 +11,8 @@
     <PackageReference Include="SendGrid" Version="9.22.0" />
     <PackageReference Include="FileHelpers" Version="3.4.2" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Storage" Version="4.0.4" />
+    <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.8" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

@@ -37,15 +37,18 @@ namespace PelotonDadsChallenge.Services
                 {
                     try
                     {
-                        var uri = $"{_pelotonOptions.BaseUri}/api/user/{user.Id}/workouts?joins=ride&limit=10&page=0";
+                        var uri = $"{_pelotonOptions.BaseUri}/api/user/{user.Id}/workouts?joins=ride&limit=20&page=0";
                         var result = await session.Request(uri).GetJsonAsync<PelotonWorkoutsResponse>();
 
-                        var workout = result.Data.Where(x => x.Ride.Id == classId).FirstOrDefault();
+                        var matchingWorkouts = result.Data.Where(x => x.Ride.Id == classId).ToList();
 
-                        if (workout != null)
+                        if (matchingWorkouts != null && matchingWorkouts.Count > 0)
                         {
-                            workout.UserName = user.Username;
-                            workouts.Add(workout);
+                            foreach (var workout in matchingWorkouts)
+                            {
+                                workout.UserName = user.Username;
+                                workouts.Add(workout);
+                            }
                         }
                         else
                         {

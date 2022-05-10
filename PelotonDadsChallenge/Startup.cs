@@ -19,6 +19,7 @@ namespace PelotonDadsChallenge
                    .AddEnvironmentVariables()
                    .Build();
 
+            builder.Services.Configure<ValuesOptions>(config.GetSection("Values"));
             builder.Services.Configure<PelotonOptions>(config.GetSection("Peloton"));
             builder.Services.Configure<SendGridOptions>(config.GetSection("SendGrid"));
             builder.Services.AddScoped<IPelotonAuthenticationService, PelotonAuthenticationService>();
@@ -26,6 +27,8 @@ namespace PelotonDadsChallenge
             builder.Services.AddScoped<IPelotonWorkoutsService, PelotonWorkoutsService>();
             builder.Services.AddScoped<IPelotonWorkoutService, PelotonWorkoutService>();
             builder.Services.AddScoped<ISendGridService, SendGridService>();
+            builder.Services.AddScoped<IAppUserChallengeResults, AppUserChallengeResults>();
+            builder.Services.AddScoped<IPersonalRecordService, PersonalRecordService>();
 
             builder.Services.AddOptions();
         }

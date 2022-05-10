@@ -7,6 +7,7 @@
         public string FollowerAccountUserId { get; set; }
         public string BaseUri { get; set; }
         public string ChallengeClassId { get; set; }
+        public int ChallengeRideLength { get; set; }
         public string SendGridApiKey { get; set; }
     }
 }
